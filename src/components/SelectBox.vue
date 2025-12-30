@@ -7,15 +7,23 @@
             <div :class="['ElementBoxTitle', 'no-select']" v-on:click="Clipboard(name)">{{ name }}</div>
 
         </div>
-        <div :class="['ElementContent', 'no-select']" v-on:click="Clipboard(id)">
-            id:{{ id }} / {{ duration }}s
+        <div style="display: flex;flex-direction: row;   display: flex;
+  justify-content: space-between; /* 两端对齐 */
+  align-items: center; /* 垂直居中，可选 */">
+            <div :class="['ElementContent', 'no-select']" v-on:click="Clipboard(id)">
+                id:{{ id }} / {{ duration }}s
+            </div>
+            <div @click="like">
+                <Star :active="isLike"></Star>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { defineProps,ref } from 'vue';
+import { defineProps, onMounted, ref } from 'vue';
 import { toast } from 'vue-sonner';
+import Star from './Star.vue';
 
 const root = ref(null)
 defineExpose({ root })  // 把 root 暴露给父组件
@@ -23,7 +31,8 @@ defineExpose({ root })  // 把 root 暴露给父组件
 const props = defineProps({
     id: String,
     name: String, // 声明父组件传递的 prop
-    duration: String
+    duration: String,
+    like: Boolean
 })
 
 function Clipboard(str) {
@@ -36,6 +45,31 @@ function Clipboard(str) {
         .catch(err => {
             toast.error('复制失败' + err)
         })
+}
+
+const isLike = ref(false)
+
+onMounted(() => {
+    const raw = localStorage.getItem('SoundEffectLikeSetting')
+    const likeSetting = raw ? JSON.parse(raw) : {}
+
+    isLike.value = (props.id in likeSetting) ? likeSetting[props.id] : false
+})
+
+function like() {
+    const raw = localStorage.getItem('SoundEffectLikeSetting')
+    const likeSetting = raw ? JSON.parse(raw) : {}
+    const id = props.id;
+    if (id in likeSetting) {
+        likeSetting[id] = !likeSetting[id]
+    }
+    else {
+        likeSetting[id] = true;
+    }
+
+    isLike.value = likeSetting[id]
+
+    localStorage.setItem('SoundEffectLikeSetting', JSON.stringify(likeSetting))
 }
 </script>
 

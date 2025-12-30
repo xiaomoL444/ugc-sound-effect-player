@@ -26,6 +26,7 @@ const props = defineProps({
     /* 水平居中 */
     align-items: center;
     height: 2.5rem;
+    min-height: 2.5rem;
     padding-left: 0.5rem;
 }
 

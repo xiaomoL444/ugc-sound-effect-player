@@ -19,7 +19,7 @@
         <div style=" margin: 0.25rem; display: flex;
   flex-direction: column;
   gap: 12px; /* 子元素上下间距 */ overflow-y: auto;">
-          <div style="display: flex; flex-direction: row;">搜索（可搜索id）：<input v-model="search"></div>
+          <div style="display: flex; flex-direction: row;">搜索（可搜索id）：<input class="input" v-model="search"></div>
           <RecycleScroller :items="rows" :item-size="120" key-field="" height="400" v-slot="{ item: row, index }">
             <div class="selectBox" :ref="el => itemRefs[index] = el">
               <SelectBox v-for="key in row" :key="key" :id="key" :name="dataJson[key].name"

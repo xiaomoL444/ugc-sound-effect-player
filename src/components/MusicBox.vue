@@ -155,19 +155,19 @@ watch(() => currentTrack.value, (newIndex) => {
 })
 
 // 监听 BGMList 变化
-watch(() => props.BGMList, (newList) => {
-    if (!newList || newList.length === 0) {
-        audioRef.value?.pause()
-        isPlaying.value = false
-        currentTrack.value = 0
-        currentTime.value = 0
-    } else if (currentTrack.value >= newList.length) {
-        currentTrack.value = newList.length - 1
-        resetAudio()
-    } else {
-        resetAudio()
-    }
-}, { deep: true })
+// watch(() => props.BGMList, (newList) => {
+//     if (!newList || newList.length === 0) {
+//         audioRef.value?.pause()
+//         isPlaying.value = false
+//         currentTrack.value = 0
+//         currentTime.value = 0
+//     } else if (currentTrack.value >= newList.length) {
+//         currentTrack.value = newList.length - 1
+//         resetAudio()
+//     } else {
+//         resetAudio()
+//     }
+// }, { deep: true })
 
 onMounted(() => {
     // 这时 audio 元素已经挂载
@@ -192,5 +192,12 @@ input[type='range'] {
 
 button {
     cursor: pointer;
+
+    border-radius: 10px;
+    border: none;
+    /* 去掉所有边框 */
+    border-bottom: 1px solid #887BD7;
+    font-size: 1.2rem;
+    padding: 0.5rem;
 }
 </style>
