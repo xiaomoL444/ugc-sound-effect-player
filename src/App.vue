@@ -18,14 +18,19 @@
 
         <div style=" margin: 0.25rem; display: flex;
   flex-direction: column;
-  gap: 12px; /* 子元素上下间距 */ overflow-y: scroll;">
+  gap: 12px; /* 子元素上下间距 */ overflow-y: auto;">
 
-          <RecycleScroller :items="keys" :item-size="32" v-slot="{ item }">
-            {{ item.name }}
+          <RecycleScroller :items="rows" :item-size="120" key-field="" height="400" v-slot="{ item: row, index }">
+            <div class="selectBox" :ref="el => itemRefs[index] = el">
+              <SelectBox v-for="key in row" :key="key" :id="key" :name="dataJson[key].name"
+                :duration="dataJson[key].duration" :class="{ 'active': currentID === key }" @click="SelectSound(key)" />
+            </div>
           </RecycleScroller>
 
-          <!-- 
-          <div class="selectBox">
+          <!-- <SelectBox :id="key" :name="dataJson[key].name" :duration="dataJson[key].duration"
+            :class="{ active: currentID === key }" @click="SelectSound(key)" :ref="el => itemRefs[index] = el" /> -->
+
+          <!-- <div class="selectBox">
             <SelectBox v-for="(key, index) in Object.keys(dataJson)" :key="key" @click="SelectSound(key)"
               :ref="el => itemRefs[index] = el" :id="key" :name="dataJson[key]['name']"
               :class="{ 'active': currentID === key }" :duration="dataJson[key]['duration']" />
@@ -77,6 +82,15 @@ import { RecycleScroller } from 'vue-virtual-scroller'
 
 const keys = computed(() => Object.keys(dataJson))
 
+const rows = computed(() => {
+  const result = []
+  for (let i = 0; i < keys.value.length; i += 3) {
+    result.push(keys.value.slice(i, i + 3))
+  }
+  console.log(result)
+  return result
+})
+
 const dataJson = data
 
 const musicList = ref(Object.keys(dataJson).map(x => `${process.env.BASE_URL}sound/${x}.mp3`))
@@ -95,9 +109,10 @@ function rgbaToHex(r, g, b, a = 255) {
 }
 // 监听 currentId 变化，滚动到可视
 watch(currentID, (newId) => {
-  const index = Object.keys(dataJson).indexOf(newId)
+  const index = Math.floor(Object.keys(dataJson).indexOf(newId) / 3)
+  console.log(index)
   if (index !== -1 && itemRefs.value[index]) {
-    itemRefs.value[index].root.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    itemRefs.value[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' })
   }
 })
 
