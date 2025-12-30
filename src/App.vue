@@ -19,7 +19,7 @@
         <div style=" margin: 0.25rem; display: flex;
   flex-direction: column;
   gap: 12px; /* 子元素上下间距 */ overflow-y: auto;">
-
+          <div style="display: flex; flex-direction: row;">搜索（可搜索id）：<input v-model="search"></div>
           <RecycleScroller :items="rows" :item-size="120" key-field="" height="400" v-slot="{ item: row, index }">
             <div class="selectBox" :ref="el => itemRefs[index] = el">
               <SelectBox v-for="key in row" :key="key" :id="key" :name="dataJson[key].name"
@@ -80,7 +80,12 @@ import { toast } from 'vue-sonner'
 import MusicBox from './components/MusicBox.vue'
 import { RecycleScroller } from 'vue-virtual-scroller'
 
-const keys = computed(() => Object.keys(dataJson))
+const search = ref('');
+
+const keys = computed(() => Object.keys(dataJson).filter(key => {
+  const value = dataJson[key]
+  return value.name.includes(search.value) || value.id.includes(search.value)
+}))
 
 const rows = computed(() => {
   const result = []
@@ -93,14 +98,14 @@ const rows = computed(() => {
 
 const dataJson = data
 
-const musicList = ref(Object.keys(dataJson).map(x => `${process.env.BASE_URL}sound/${x}.mp3`))
+const musicList = computed(() => keys.value.map(x => `${process.env.BASE_URL}sound/${x}.mp3`))
 
 const currentID = ref(0)
 const current_index = ref(0);
 function SelectSound(id) {
   console.log(`选择了${id}`)
   currentID.value = id
-  current_index.value = Object.keys(dataJson).indexOf(id);
+  current_index.value = keys.value.indexOf(id);
 }
 
 function rgbaToHex(r, g, b, a = 255) {
@@ -109,7 +114,7 @@ function rgbaToHex(r, g, b, a = 255) {
 }
 // 监听 currentId 变化，滚动到可视
 watch(currentID, (newId) => {
-  const index = Math.floor(Object.keys(dataJson).indexOf(newId) / 3)
+  const index = Math.floor(keys.value.indexOf(newId) / 3)
   console.log(index)
   if (index !== -1 && itemRefs.value[index]) {
     itemRefs.value[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' })
@@ -117,7 +122,7 @@ watch(currentID, (newId) => {
 })
 
 watch(current_index, (new_index) => {
-  currentID.value = Object.keys(dataJson)[new_index]
+  currentID.value = keys.value[new_index]
 })
 </script>
 
