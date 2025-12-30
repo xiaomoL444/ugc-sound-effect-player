@@ -4,8 +4,8 @@
         <button @click="prevTrack">上一首</button>
         <button @click="nextTrack">下一首</button>
 
-        <div v-if="currentTrackSrc">
-            <p>歌曲id: {{ currentTrackSrc.split('/').pop().split('.')[0] }}</p>
+        <div v-if="showID">
+            <p>歌曲id: {{ showID }}</p>
         </div>
 
         <!-- 时间进度 -->
@@ -55,6 +55,8 @@ let sourceNode = null
 let gainNode = null
 
 const currentTrackSrc = computed(() => props.BGMList[currentTrack.value] || null)
+
+const showID = ref(0)
 
 // 初始化 Web Audio API，只创建一次 sourceNode
 function initAudio() {
@@ -150,6 +152,7 @@ function formatTime(sec) {
 watch(() => currentTrack.value, (newIndex) => {
     if (newIndex >= 0 && newIndex < props.BGMList.length) {
         currentTrack.value = newIndex
+        showID.value=currentTrackSrc.value.split('/').pop().split('.')[0] 
         resetAudio()
     }
 })

@@ -20,9 +20,10 @@
   flex-direction: column;
   gap: 12px; /* 子元素上下间距 */ overflow-y: auto;">
           <div style="display: flex; flex-direction: row;">搜索（可搜索id）：<input class="input" v-model="search"></div>
-          <RecycleScroller :items="rows" :item-size="120" key-field="" height="400" v-slot="{ item: row, index }">
+
+          <RecycleScroller :items="rows" :item-size="120" key-field="id" height="400" v-slot="{ item: row, index }">
             <div class="selectBox" :ref="el => itemRefs[index] = el">
-              <SelectBox v-for="key in row" :key="key" :id="key" :name="dataJson[key].name"
+              <SelectBox v-for="key in row.data" :key="key" :id="key" :name="dataJson[key].name"
                 :duration="dataJson[key].duration" :class="{ 'active': currentID === key }" @click="SelectSound(key)" />
             </div>
           </RecycleScroller>
@@ -88,10 +89,11 @@ const keys = computed(() => Object.keys(dataJson).filter(key => {
 }))
 
 const rows = computed(() => {
-  const result = []
+  let result = []
   for (let i = 0; i < keys.value.length; i += 3) {
     result.push(keys.value.slice(i, i + 3))
   }
+  result = result.map((r, i) => ({ id: i, data: r }))
   console.log(result)
   return result
 })
