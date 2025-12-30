@@ -5,7 +5,7 @@
         <button @click="nextTrack">下一首</button>
 
         <div v-if="currentTrackSrc">
-            <p>当前曲目: {{ currentTrackSrc.split('/').pop() }}</p>
+            <p>歌曲id: {{ currentTrackSrc.split('/').pop().split('.')[0] }}</p>
         </div>
 
         <!-- 时间进度 -->
